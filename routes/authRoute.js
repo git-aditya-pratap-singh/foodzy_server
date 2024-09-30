@@ -33,6 +33,8 @@ const { FavouriteRestaurents } = require("../controllers/FavouriteRestaurents");
 const {getFavrioteController} = require("../controllers/getFavrioteController");
 const {FavDelete} = require("../controllers/FavDelete");
 
+const {requireSignIn} = require("../middlewares/authMiddleware");
+
 // using express's Router for routing the requests
 const router = express.Router();
 
@@ -51,33 +53,41 @@ router.get('/reset-password2/:id/:token', resetPasswordVerified)
 
 router.post('/reset-password/:id/:token', updatePassword)
 
-router.post('/change-password/:id', ChangePassword);
+router.post('/change-password/:id', requireSignIn, ChangePassword);
 
 // 4.) ========== CHANGE ADDRESS ==========
-router.put('/change-address/:id', updateAddress)
+router.put('/change-address/:id', requireSignIn, updateAddress)
 
 // 5.) ========== CHANGE USER DETAILS ==========
-router.put('/update-user/:id', updateUserDetails)
+router.put('/update-user/:id', requireSignIn, updateUserDetails)
 
 // 6.) ========== PAYMENT CHECKOUT ==========
-router.post('/payment-checkout', PaymentController)
+router.post('/payment-checkout', requireSignIn, PaymentController)
 
-router.post('/paymentverification/:email', paymentVerification)
+router.post('/paymentverification/:email', requireSignIn, paymentVerification)
 
 // 7.) ========== ORDER DETAILS ==========
-router.get('/orders/:email', OrderControllers)
+router.get('/orders/:email', requireSignIn, OrderControllers)
 
 // 8.) ========== ORDER DELETE ==========
-router.get('/deleteOrders/:id', orderDelete)
+router.get('/deleteOrders/:id', requireSignIn, orderDelete)
 
 // 9.) ========== FAVRIOTE RESTAURENTS ==========
 
 // database store
-router.post('/favRestaurent/:email', FavouriteRestaurents)
+router.post('/favRestaurent/:email', requireSignIn, FavouriteRestaurents)
 // get favriotes restaurents (user)
-router.get('/favItems/:email', getFavrioteController)
+router.get('/favItems/:email', requireSignIn, getFavrioteController)
 // delete favriotes restaurents (user)
-router.get('/deleteFavriotes/:id', FavDelete);
+router.get('/deleteFavriotes/:id', requireSignIn, FavDelete);
+
+router.post('/payNow', requireSignIn, (req, res)=>{
+    console.log("FETCH")
+    return res.status(200).send({
+        success : true,
+        message : "Fetched!"
+    }) 
+})
 
 
 
